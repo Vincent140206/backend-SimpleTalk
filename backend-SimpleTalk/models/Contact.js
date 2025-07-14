@@ -1,8 +1,10 @@
+// models/Contact.js
 const mongoose = require('mongoose');
-const User = require('../models/User');
 
 const contactSchema = new mongoose.Schema({
-  id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  name: { type: String, required: true },
+  email: { type: String },
   addedAt: { type: Date, default: Date.now }
 });
 
