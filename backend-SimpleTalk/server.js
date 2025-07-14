@@ -7,6 +7,8 @@ const dotenv = require('dotenv');
 const authRoutes = require('./routes/auth');
 const socketIo = require('socket.io')
 const contactRoutes = require('./routes/contacts');
+const Message = require('./models/Message');
+const messageRoutes = require('./routes/messages');
 
 dotenv.config();
 
@@ -21,6 +23,7 @@ app.get('/api/auth/test', (req, res) => {
   res.send("Hello from Node.js backend!");
 });
 app.use('/api/contacts', contactRoutes);
+app.use('/api/messages', messageRoutes);
 
 const io = socketIo(server, {
   cors: {
@@ -105,22 +108,33 @@ io.on('connection', (socket) => {
   });
 
   // Event untuk private message dengan validasi
-  socket.on('PrivateMessage'
-    , (data) => {
+  socket.on('PrivateMessage', (data) => {
     try {
       console.log('Pesan private diterima:', data);
+      const { to, message } = data;
+      const from = socket.userId;
       
-      if (!data.to || !data.message) {
+      if (!to || !message) {
         socket.emit('messageError', { message: 'Invalid message data' });
         return;
       }
-      
+
+      const timestamp = new Date();
+
+      const savedMessage = Message.create({
+        from,
+        to,
+        message,
+        timestamp
+      });  
+
       // Tambahkan info pengirim
       const messageData = {
-        ...data,
-        from: socket.userId || socket.id,
-        timestamp: new Date().toISOString(),
-        messageId: Date.now() + Math.random()
+        from,
+        to,
+        message,
+        timestamp: timestamp.toISOString(),
+        messageId: savedMessage._id, 
       };
       
       // Kirim ke target user
