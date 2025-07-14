@@ -59,11 +59,16 @@ router.get('/:userId', async (req, res) => {
             return res.status(404).json({ message: 'User tidak ditemukan' });
         }
 
-        res.json({ contacts: user.contacts });
-    } catch (e) {
+        if (!user.contacts || user.contacts.length === 0) {
+          return res.json({ contacts: [] });
+        }
+
+        const validContacts = user.contacts.filter(c => c.userId != null);
+        res.json({ contacts: validContacts });
+      } catch (e) {
         console.error(e);
         res.status(500).json({ message: 'Gagal Mengambil Kontak' });
-    }
+      }
 });
 
 module.exports = router;
