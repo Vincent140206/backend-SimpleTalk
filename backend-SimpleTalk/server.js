@@ -6,6 +6,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const authRoutes = require('./routes/auth');
 const socketIo = require('socket.io')
+const contactRoutes = require('./routes/contacts');
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.use('/api/auth', authRoutes);
 app.get('/api/auth/test', (req, res) => {
   res.send("Hello from Node.js backend!");
 });
+app.use('/api/contacts', contactRoutes);
 
 const io = socketIo(server, {
   cors: {
@@ -101,7 +103,8 @@ io.on('connection', (socket) => {
   });
 
   // Event untuk private message dengan validasi
-  socket.on('PrivateMessage', (data) => {
+  socket.on('PrivateMessage'
+    , (data) => {
     try {
       console.log('Pesan private diterima:', data);
       

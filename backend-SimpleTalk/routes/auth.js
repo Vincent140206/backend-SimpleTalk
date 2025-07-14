@@ -9,4 +9,5 @@ router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.delete('/delete', authMiddleware, authController.deleteAccount);
 
+
 module.exports = router;
