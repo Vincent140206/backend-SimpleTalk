@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const Contact = require('../models/Contact');
 
 // Tambah Kontak
 router.post('/add', async (req, res) => {
@@ -16,7 +17,7 @@ router.post('/add', async (req, res) => {
             return res.status(404).json({ message: 'User tidak ditemukan' });
         }
 
-        const alreadyExists = user.contacts.includes(contactId);
+        const alreadyExists = user.contacts.some(c => c.userId.toString() === contactId);
         if (alreadyExists) {
             return res.status(400).json({ message: 'Kontak sudah ada' });
         }
@@ -24,6 +25,7 @@ router.post('/add', async (req, res) => {
         user.contacts.push({ userId: contactId });
         await user.save();
 
+        printf('Kontak berhasil ditambahkan: %s', contactId);
         res.json({ message: 'Kontak berhasil ditambahkan', contacts: user.contacts });
     } catch (e) {
         console.error(e);
