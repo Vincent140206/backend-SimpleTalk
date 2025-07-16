@@ -9,7 +9,10 @@ const userSchema = new mongoose.Schema({
       userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
       addedAt: { type: Date, default: Date.now }
     }
-  ]
+  ],
+  photoProfile: {
+    type: String,
+  }
 });
 
 module.exports = mongoose.model('User', userSchema);

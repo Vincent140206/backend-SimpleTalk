@@ -9,6 +9,7 @@ const socketIo = require('socket.io')
 const contactRoutes = require('./routes/contacts');
 const Message = require('./models/Message');
 const messageRoutes = require('./routes/messages');
+const userRoutes = require('./routes/user');
 
 dotenv.config();
 
@@ -17,7 +18,8 @@ const server = http.createServer(app);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-app.use(express.json()); 
+app.use(express.json());
+app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
 app.get('/api/auth/test', (req, res) => {
   res.send("Hello from Node.js backend!");

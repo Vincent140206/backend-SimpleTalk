@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 
 const authMiddleware = (req, res, next) => {
-  console.log('🔥 Middleware terpanggil');
   const token = req.header('Authorization')?.replace('Bearer ', '');
 
   if (!token) {
@@ -17,4 +16,4 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-module.exports = authMiddleware;
+module.exports = authMiddleware; 
