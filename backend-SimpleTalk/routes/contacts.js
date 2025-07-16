@@ -54,7 +54,7 @@ router.post('/add', async (req, res) => {
 router.get('/:userId', async (req, res) => {
   console.log('UserID param:', req.params.userId);
     try {
-        const user = await User.findById(req.params.userId).populate('contacts.userId', 'name email');
+        const user = await User.findById(req.params.userId).populate('contacts.userId', 'name email photoProfile');
         if(!user) {
             return res.status(404).json({ message: 'User tidak ditemukan' });
         }
