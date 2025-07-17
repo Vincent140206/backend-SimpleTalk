@@ -1,6 +1,13 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key:    process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 exports.updatePhoto = async (req, res) => {
   try {
@@ -38,3 +45,22 @@ exports.getProfile = async (req, res) => {
     res.status(500).json({ message: 'Gagal mendapatkan profil' });
   }
 };
+
+router.post('/delete-profile-photo', async (req, res) => {
+  const { public_id } = req.body;
+
+  if (!public_id) {
+    return res.status(400).json({ error: 'public_id dibutuhkan' });
+  }
+
+  try {
+    const result = await cloudinary.uploader.destroy(public_id);
+    if (result.result === 'ok') {
+      return res.json({ message: 'Foto berhasil dihapus' });
+    } else {
+      return res.status(500).json({ error: 'Gagal menghapus foto', result });
+    }
+  } catch (err) {
+    return res.status(500).json({ error: 'Error saat menghapus foto', detail: err });
+  }
+});

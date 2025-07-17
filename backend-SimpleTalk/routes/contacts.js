@@ -17,13 +17,11 @@ router.post('/add', async (req, res) => {
       return res.status(404).json({ message: 'User tidak ditemukan' });
     }
 
-    // Cari kontak berdasarkan nama dan email
-    const contactUser = await User.findOne({ name: username, email: email });
+    const contactUser = await User.findOne({ email: email });
     if (!contactUser) {
       return res.status(404).json({ message: 'Kontak tidak ditemukan di database' });
     }
 
-    // Cek apakah sudah ada di daftar kontak
     const alreadyExists = user.contacts.some(
       c => c.userId.toString() === contactUser._id.toString()
     );
@@ -31,7 +29,6 @@ router.post('/add', async (req, res) => {
       return res.status(400).json({ message: 'Kontak sudah ada' });
     }
 
-    // Tambahkan ke daftar kontak user
     user.contacts.push({ userId: contactUser._id });
     await user.save();
 
