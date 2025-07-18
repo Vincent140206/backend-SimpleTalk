@@ -46,9 +46,8 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-router.post('/delete-profile-photo', async (req, res) => {
+exports.deleteProfilePhoto = async (req, res) => {
   const { public_id } = req.body;
-
   if (!public_id) {
     return res.status(400).json({ error: 'public_id dibutuhkan' });
   }
@@ -63,4 +62,4 @@ router.post('/delete-profile-photo', async (req, res) => {
   } catch (err) {
     return res.status(500).json({ error: 'Error saat menghapus foto', detail: err });
   }
-});
+};

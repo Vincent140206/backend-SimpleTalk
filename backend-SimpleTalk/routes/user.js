@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
-const { updatePhoto, getProfile } = require('../controllers/userController');
+const { updatePhoto, getProfile, deleteProfilePhoto } = require('../controllers/userController');
 
 router.get('/profile', authMiddleware, getProfile);
 router.put('/update-photo', authMiddleware, updatePhoto);
-router.post('/delete-profile-photo', authMiddleware);
+router.post('/delete-profile-photo', authMiddleware, deleteProfilePhoto);
 
 module.exports = router;
