@@ -10,6 +10,7 @@ const contactRoutes = require('./routes/contacts');
 const Message = require('./models/Message');
 const messageRoutes = require('./routes/messages');
 const userRoutes = require('./routes/user');
+const otpRoute = require('./routes/otpRoutes');
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.get('/api/auth/test', (req, res) => {
 });
 app.use('/api/contacts', contactRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/auth', otpRoute);
 
 const io = socketIo(server, {
   cors: {
