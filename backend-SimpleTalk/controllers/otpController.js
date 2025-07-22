@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
+const otpStore = {};
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -17,15 +18,17 @@ exports.sendOtp = async (req, res) => {
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000);
+    const expiresAt = Date.now() + 10 * 60 * 1000; 
+    otpStore[email] = { otp, expiresAt, attempts: 0 };
 
     const mailOptions = {
         from: `"SimpleTalk Support" <${process.env.EMAIL_USER}>`,
-        to: email, // ganti dengan email tujuan
+        to: email, 
         subject: 'Kode OTP Verifikasi Anda - SimpleTalk',
         html: `
         <div style="max-width: 600px; margin: auto; font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
             <h2 style="color: #4CAF50; text-align: center;">Verifikasi Akun Anda</h2>
-            <p>Halo <strong>${userName || 'Pengguna'}</strong>,</p>
+            <p>Halo <strong>Pengguna</strong>,</p>
             <p>Terima kasih telah menggunakan SimpleTalk. Berikut adalah <strong>Kode OTP</strong> Anda untuk verifikasi:</p>
             
             <div style="text-align: center; margin: 30px 0;">
@@ -55,3 +58,35 @@ exports.sendOtp = async (req, res) => {
         return res.status(500).json({ error: 'Failed to send OTP' });
     }
 } 
+
+exports.verifyOtp = (req, res) => {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+        return res.status(400).json({ error: 'Email and OTP are required' });
+    }
+
+    const record = otpStore[email];
+
+    if (!record) {
+        return res.status(400).json({ message: 'OTP tidak ditemukan atau belum diminta' });
+    }
+
+    if (Date.now() > record.expiresAt) {
+        delete otpStore[email];
+        return res.status(400).json({ message: 'OTP telah kedaluwarsa' });
+    }
+
+    if (record.attempts >= 5) {
+        delete otpStore[email];
+        return res.status(429).json({ message: 'Terlalu banyak percobaan, Silakan request OTP baru' });
+    }
+
+    if (otp.toString() !== record.otp.toString()) {
+        otpStore[email].attempts++;
+        return res.status(400).json({ message: 'OTP salah' });
+    }
+
+    delete otpStore[email];
+    return res.status(200).json({ message: 'OTP berhasil diverifikasi' });
+}
