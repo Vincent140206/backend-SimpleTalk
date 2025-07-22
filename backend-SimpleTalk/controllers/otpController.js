@@ -20,6 +20,7 @@ exports.sendOtp = async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000);
     const expiresAt = Date.now() + 10 * 60 * 1000; 
     otpStore[email] = { otp, expiresAt, attempts: 0 };
+    console.log(otpStore);
 
     const mailOptions = {
         from: `"SimpleTalk Support" <${process.env.EMAIL_USER}>`,
@@ -84,6 +85,7 @@ exports.verifyOtp = (req, res) => {
 
     if (otp.toString() !== record.otp.toString()) {
         otpStore[email].attempts++;
+        console.log(`Failed OTP attempt for ${email}. Attempts: ${otpStore[email].attempts}`);
         return res.status(400).json({ message: 'OTP salah' });
     }
 

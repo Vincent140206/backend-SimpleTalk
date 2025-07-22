@@ -41,7 +41,7 @@ exports.loginUser = async (req, res) => {
 
 exports.deleteAccount = async (req, res) => {
   try {
-    console.log('📩 Delete account terpanggil');
+    console.log('Delete account terpanggil');
     console.log("REQ USER:", req.user);
 
     const userId = req.user.id; 
