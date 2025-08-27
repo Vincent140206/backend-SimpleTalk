@@ -22,6 +22,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes);
 app.get('/api/auth/test', (req, res) => {
   res.send("Hello from Node.js backend!");
 });

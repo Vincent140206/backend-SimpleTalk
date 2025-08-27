@@ -7,5 +7,8 @@ const authMiddleware = require('../middleware/authMiddleware');
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.delete('/delete', authMiddleware, deleteAccount);
+router.get('/check', authMiddleware, (req, res) => {
+  res.json({ valid: true, user: req.user });
+});
 
 module.exports = router;
